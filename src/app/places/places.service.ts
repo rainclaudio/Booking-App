@@ -107,12 +107,15 @@ export class PlacesService {
     return this._placesVector.asObservable();
   }
   get_place(id: string) {
-    return this._placesVector.pipe(
-      take(1),
-      map((places) => {
-        return { ...places.find((p) => p.id_place === id) };
-      })
-    );
+    return this.http
+      .get(
+        `https://ionic-angular-course-d0193-default-rtdb.firebaseio.com/offered-places/${id}.json`
+      )
+      .pipe(
+        tap((resData) => {
+          console.log(resData);
+        })
+      );
   }
   fetchPlaces() {
     return this.http
