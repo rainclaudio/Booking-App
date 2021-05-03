@@ -1,0 +1,20 @@
+h2{
+  font-size: 18px;
+  border: 1px solid var(--ion-color-primary);
+  padding: 8px;
+  border-radius: 5px;
+  color: var(--ion-color-secondary);
+}
+.offer-details{
+  display: flex;
+  align-items: center;
+    .space-left{
+      margin: 10px;
+    }
+    .color-calendar1{
+      color: blueviolet;
+    }
+    .color-calendar2{
+      color: green;
+    }
+}

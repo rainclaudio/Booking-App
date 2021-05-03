@@ -145,6 +145,17 @@
     --ion-color-light-contrast-rgb: 255,255,255;
     --ion-color-light-shade: #1e2023;
     --ion-color-light-tint: #383a3e;
+
+  /*  DOESNT WORK
+  --ion-color-redowncolor: #ff0505;
+    --ion-color-redowncolor-rgb: 34,36,40;
+    --ion-color-redowncolor-contrast: #ffffff;
+    --ion-color-redowncolor-contrast-rgb: 255,255,255;
+    --ion-color-redowncolor-shade: #a52c2c;
+    --ion-color-redowncolor-tint: #f57e7e;
+*/
+    // --ion-toolbar-background: #ee1616;
+    --ion-toolbar-background: var(--ion-color-primary)
   }
 
   /*
@@ -153,6 +164,7 @@
    */
 
   .ios body {
+
     --ion-background-color: #000000;
     --ion-background-color-rgb: 0,0,0;
 
@@ -233,4 +245,8 @@
 
     --ion-card-background: #1e1e1e;
   }
+}
+ion-button{
+  --box-shadow: 2px 2px 20px rgba(10,0,0.6);
+  --border-color: white;
 }

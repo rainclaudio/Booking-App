@@ -1,0 +1,85 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- 20 04 21 -->
+      <!-- you could have multiples menus
+      so its good practice to give it an Id -->
+      <ion-menu-button></ion-menu-button>
+
+      <!-- 20 04 21 -->
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="places/tabs/discover"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/places/tabs/offers/new-offer">
+        <ion-icon name="add" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>My Offers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-tabs>
+    <ion-tab-bar slot="top">
+      <!-- <ion-tab-button tab = new-offer>
+        <ion-label>new Offer</ion-label>
+        <ion-icon name = search></ion-icon>
+      </ion-tab-button>
+
+      <ion-tab-button tab = edit-offer>
+        <ion-label>edit-offer</ion-label>
+        <ion-icon name = card ></ion-icon>
+      </ion-tab-button>
+
+      <ion-tab-button tab = offer-booking>
+        <ion-label>offer-booking</ion-label>
+        <ion-icon name = card ></ion-icon>
+      </ion-tab-button>-->
+    </ion-tab-bar>
+  </ion-tabs>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-sm="8" offset-sm="2" text-center>
+        <div *ngIf = "isLoading" class="ion-text-center">
+          <p>Loading...</p>
+        <ion-spinner color = primary ></ion-spinner>
+      </div>
+        <div class="ion-text-center"
+        *ngIf="!isLoading && offerVectorPlacescopy.length <= 0">
+        <p>
+          No offers Found! Create One first
+        </p>
+        <ion-button color = primary routerLink = "/places/tabs/offers/new-offer">
+          Offer New Place
+        </ion-button>
+        </div>
+
+        <ion-list *ngIf="!isLoading && offerVectorPlacescopy.length > 0">
+          <ion-item-sliding
+            *ngFor="let it of offerVectorPlacescopy "
+            #slidingItem
+          >
+            <app-offer-item [offer]="it"></app-offer-item>
+            <ion-item-options>
+              <ion-item-option
+                color="secondary"
+                (click)="onEditFunction(it.id_place,slidingItem)"
+              >
+                <ion-icon name="create" slot="top"></ion-icon>
+                Edit
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <!-- <ion-row> -->
+    <!-- <app-new-offer> -->
+
+    <!-- </app-new -offer> -->
+    <!-- </ion-row> -->
+  </ion-grid>
+</ion-content>
