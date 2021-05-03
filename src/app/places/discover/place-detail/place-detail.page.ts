@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ActionSheetController,
+  AlertController,
   LoadingController,
   ModalController,
   NavController,
@@ -22,37 +23,58 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
   currentPlace: PlaceNode;
   private placeSub: Subscription;
   id_place: string;
+  isLoading = false;
   isbookable = false;
   constructor(
-    private router: ActivatedRoute,
+    private route: ActivatedRoute,
     private navCtrl: NavController,
     private placesService: PlacesService,
     private modalCtrl: ModalController,
     private actionSheetCtrl: ActionSheetController,
     private bookingService: BookingService,
     private LoadingController: LoadingController,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertController: AlertController,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.router.paramMap.subscribe((paramMap) => {
+    this.route.paramMap.subscribe((paramMap) => {
       if (!paramMap.has('placeId')) {
         this.navCtrl.navigateBack('places/tabs/discover');
         return;
       }
+      this.isLoading = true;
       // CONCLUSIÓN: este viene de places routing module
       this.id_place = paramMap.get('placeId');
-      this.placeSub = this.placesService
-        .get_place(this.id_place)
-        .subscribe((place) => {
+      this.placeSub = this.placesService.get_place(this.id_place).subscribe(
+        (place) => {
           this.currentPlace = place;
           this.isbookable = place.userId !== this.authService.userId;
-        });
+          this.isLoading = false;
+        },
+        (error) => {
+          this.alertController
+            .create({
+              header: 'An error ocurred',
+              message: 'Could not load place',
+              buttons: [
+                {
+                  text: 'Okay',
+                  handler: () => {
+                    this.router.navigate(['/places/tabs/discover']);
+                  },
+                },
+              ],
+            })
+            .then((alertEl) => alertEl.present());
+        }
+      );
       // this.currentPlace = this.placesService.get_place(this.id_place);
     });
   }
   onBookPlaceFunction() {
-    // this.router.navigateByUrl('/places/tabs/discover');
+    // this.route.navigateByUrl('/places/tabs/discover');
     // this.navCtrl.navigateBack('/places/tabs/discover');
     this.actionSheetCtrl
       .create({

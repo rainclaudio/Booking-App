@@ -15,11 +15,11 @@ const routes: Routes = [
   {
     path: 'edit-offer/:offer-bookingId',
     loadChildren: () => import('./edit-offer/edit-offer.module').then( m => m.EditOfferPageModule)
-  },
-  {
-    path: ':offer-bookingId',
-    loadChildren: () => import('./offer-booking/offer-booking.module').then( m => m.OfferBookingPageModule)
   }
+  // {
+    // path: ':offer-bookingId',
+    //  loadChildren: () => import('./offer-booking/offer-booking.module').then( m => m.OfferBookingPageModule)
+  // }
 ];
 
 @NgModule({

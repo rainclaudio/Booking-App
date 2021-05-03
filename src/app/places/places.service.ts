@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NumberValueAccessor } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject,of } from 'rxjs';
 import { take, map, tap, delay, switchMap, reduce } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 import { PlaceNode } from './placeNode';
@@ -108,12 +108,21 @@ export class PlacesService {
   }
   get_place(id: string) {
     return this.http
-      .get(
+      .get<PlaceData>(
         `https://ionic-angular-course-d0193-default-rtdb.firebaseio.com/offered-places/${id}.json`
       )
       .pipe(
-        tap((resData) => {
-          console.log(resData);
+        map((placeData) => {
+          return new PlaceNode(
+            id,
+            placeData.title_place,
+            placeData.description_place,
+            placeData.imageUrl,
+            placeData.price,
+            new Date(placeData.availableFrom),
+            new Date(placeData.availableTo),
+            placeData.userId
+          );
         })
       );
   }
@@ -199,6 +208,14 @@ export class PlacesService {
     return this._placesVector.pipe(
       take(1),
       switchMap((places) => {
+        if(!places || places.length <= 0){
+          return this.fetchPlaces();
+        } else {
+          return of(places);
+        }
+
+      }),
+      switchMap(places => {
         const updatedPlaceIndex = places.findIndex(
           (pl) => pl.id_place === placeId
         );

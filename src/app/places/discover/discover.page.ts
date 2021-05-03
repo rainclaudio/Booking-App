@@ -32,12 +32,12 @@ export class DiscoverPage implements OnInit, OnDestroy {
     });
     // this.placesVectorCopy = this.placesService.get_places();
   }
- /* ionViewWillEnter(){
+  ionViewWillEnter(){
     this.isloading = true;
     this.placesService.fetchPlaces().subscribe( () => {
       this.isloading = false;
     });
-  }*/
+  }
   onOpenMenu() {
     // if closed open else close
     // console.log("click");
