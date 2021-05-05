@@ -12,6 +12,7 @@ import { BookingService } from './booking.service';
 export class BookingsPage implements OnInit, OnDestroy {
   loadedBookingsVectorCopy: Booking[];
   private bookingSub: Subscription;
+  isLoading = false;
   constructor(
     private bookingService: BookingService,
     private loadingController: LoadingController
@@ -21,6 +22,13 @@ export class BookingsPage implements OnInit, OnDestroy {
     this.bookingSub = this.bookingService.getbookings.subscribe((bookins) => {
       this.loadedBookingsVectorCopy = bookins;
     });
+  }
+  ionViewWillEnter(){
+    this.isLoading = true;
+   this.bookingService.fetchBookings().subscribe(() => {
+      this.isLoading = false;
+    });
+
   }
   onCancelFunction(bookingId: string, slidingEl: IonItemSliding) {
     this.loadingController.create({message: 'Canceling Booking....'})

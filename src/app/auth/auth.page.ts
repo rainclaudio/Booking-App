@@ -38,8 +38,7 @@ export class AuthPage implements OnInit {
 
   }
   onSwitchAuthMode(){
-    console.log("switched");
-    this.isLogin = !this.isLogin;
+   this.isLogin = !this.isLogin;
   }
   onSubmit(form: NgForm){
     console.log("OnsubmitFunctiono");
