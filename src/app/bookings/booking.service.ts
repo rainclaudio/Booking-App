@@ -68,40 +68,46 @@ export class BookingService {
     dateFrom: Date,
     dateTo: Date
   ) {
-    const newBooking = new Booking(
-      Math.random().toString(),
-      placeId.toString(),
-      this.authService.userId,
-      placeTitle,
-      placeImage,
-      firstname,
-      lastname,
-      guestnumber,
-      dateFrom,
-      dateTo
-    );
     let generatedId: string;
-    return this.http
-      .post<{ name: string }>(
-        'https://ionic-angular-course-d0193-default-rtdb.firebaseio.com/booked-places.json',
-        {
-          ...newBooking,
-          // this replaces the current id given from the function
-          id: null,
+    let newBooking: Booking;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap((userId) => {
+        if (!userId) {
+          throw new Error('No user id found!');
         }
-      )
-      .pipe(
-        // switch map gets data
-        switchMap((resData) => {
-          generatedId = resData.name;
-          return this.getbookings;
-        }),
-        take(1),
-        tap((places) => {
-          newBooking.id = generatedId;
-          this._bookingsVector.next(places.concat(newBooking));
-        })
-      );
+
+        newBooking = new Booking(
+          Math.random().toString(),
+          placeId.toString(),
+          userId,
+          placeTitle,
+          placeImage,
+          firstname,
+          lastname,
+          guestnumber,
+          dateFrom,
+          dateTo
+        );
+        return this.http.post<{ name: string }>(
+          'https://ionic-angular-course-d0193-default-rtdb.firebaseio.com/booked-places.json',
+          {
+            ...newBooking,
+            // this replaces the current id given from the function
+            id: null,
+          }
+        );
+      }),
+      switchMap((resData) => {
+        generatedId = resData.name;
+        return this.getbookings;
+      }),
+      take(1),
+      tap((places) => {
+        newBooking.id = generatedId;
+        this._bookingsVector.next(places.concat(newBooking));
+      })
+    );
     /*
     return this._bookingsVector.pipe(
       take(1),

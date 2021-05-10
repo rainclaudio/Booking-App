@@ -68,10 +68,9 @@
             type = submit
             color="primary"
             expand="block"
-            (click)="onLoginFunction()"
             [disabled]="!f.valid"
           >
-            Login
+            {{isLogin ? 'Login' : 'Signup'}}
           </ion-button>
         </ion-col>
       </ion-row>

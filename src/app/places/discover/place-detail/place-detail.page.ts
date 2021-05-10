@@ -8,6 +8,7 @@ import {
   NavController,
 } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { BookingService } from 'src/app/bookings/booking.service';
 import { MapModalComponent } from 'src/app/shared/map-modal/map-modal.component';
@@ -48,10 +49,19 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
       this.isLoading = true;
       // CONCLUSIÓN: este viene de places routing module
       this.id_place = paramMap.get('placeId');
-      this.placeSub = this.placesService.get_place(this.id_place).subscribe(
+      let fetchedUserId: string;
+      this.authService.userId.pipe(
+        switchMap((userId) => {
+          if (!userId) {
+            throw new Error('Found no user!');
+          }
+          fetchedUserId = userId;
+          return this.placesService.get_place(this.id_place);
+        })
+      ).subscribe(
         (place) => {
           this.currentPlace = place;
-          this.isbookable = place.userId !== this.authService.userId;
+          this.isbookable = place.userId !== fetchedUserId;
           this.isLoading = false;
         },
         (error) => {
@@ -151,22 +161,23 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     }
   }
 
-  onShowFullMap(){
-
-    this.modalCtrl.
-       create({
-         component: MapModalComponent,
-         componentProps:{
-            center: {
-              lat: this.currentPlace.location.lat,
-              lng: this.currentPlace.location.lng
-            },
-         selectable: false,
-         closeButtonText: 'Close',
-         title: this.currentPlace.location.address
-    }}).then(modalEl => {
-      modalEl.present();
-    });
+  onShowFullMap() {
+    this.modalCtrl
+      .create({
+        component: MapModalComponent,
+        componentProps: {
+          center: {
+            lat: this.currentPlace.location.lat,
+            lng: this.currentPlace.location.lng,
+          },
+          selectable: false,
+          closeButtonText: 'Close',
+          title: this.currentPlace.location.address,
+        },
+      })
+      .then((modalEl) => {
+        modalEl.present();
+      });
   }
   // hay stock de tepa de II
   // llevar bolsa para mugre

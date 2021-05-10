@@ -6,7 +6,8 @@
 // THIS ADDS GLOBAL VARIABLES
 export const environment = {
   production: false,
-  googleMapsAPIKey: 'AIzaSyDu_U9h_FEn7ttl3yzgAeSOciDAO48G_Fo'
+  googleMapsAPIKey: 'AIzaSyDu_U9h_FEn7ttl3yzgAeSOciDAO48G_Fo',
+  firebaseAPIKey: 'AIzaSyBUkm8m90ZbF148u09GLEyuKQGyP3bKeXY'
 };
 
 /*
