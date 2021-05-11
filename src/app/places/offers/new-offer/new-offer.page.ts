@@ -69,16 +69,35 @@ export class NewOfferPage implements OnInit {
   onLocationPicked(location: PlaceLocation) {
     this.form.patchValue({ location: location });
   }
+
+
+  onImagePicked(imageData: string | File) {
+    console.log('picking');
+    let imageFile;
+    if (typeof imageData === 'string') {
+      try {
+        const imageFile = base64toBlob(
+          imageData.replace('data: image/jpeg;base64,', ''),
+          'image/jpeg'
+        );
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+    } else {
+      imageFile = imageData;
+    }
+    this.form.patchValue({ image: imageFile });
+  }
   onCreateOffer() {
     if (!this.form.valid || !this.form.get('image').value) {
       return;
     }
-    console.log(this.form.value);
     this.loadingCtrl
       .create({
-        message: 'Creating place...',
+        message: 'Creating place...'
       })
-      .then((loadingEl) => {
+      .then(loadingEl => {
         loadingEl.present();
         this.placesService
           .uploadImage(this.form.get('image').value)
@@ -101,26 +120,5 @@ export class NewOfferPage implements OnInit {
             this.router.navigate(['/places/tabs/offers']);
           });
       });
-
-    // console.log('creating offered place');
-    // console.log(this.form);
-  }
-  onImagePicked(imageData: string | File) {
-    console.log('picking');
-    let imageFile;
-    if (typeof imageData === 'string') {
-      try {
-        const imageFile = base64toBlob(
-          imageData.replace('data: image/jpeg;base64,', ''),
-          'image/jpeg'
-        );
-      } catch (error) {
-        console.error(error);
-        return;
-      }
-    } else {
-      imageFile = imageData;
-    }
-    this.form.patchValue({ image: imageFile });
   }
 }

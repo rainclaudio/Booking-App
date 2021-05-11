@@ -25,36 +25,18 @@ export class BookingService {
   get getbookings() {
     return this._bookingsVector.asObservable();
   }
-  fetchBookings() {
+  cancelBooking(bookingId: string) {
     return this.http
-      .get<{ [key: string]: BookData }>(
-        `https://ionic-angular-course-d0193-default-rtdb.firebaseio.com/booked-places.json?orderBy="userId"&equalTo="${this.authService.userId}"`
+      .delete(
+        `https://ionic-angular-course-d0193-default-rtdb.firebaseio.com/booked-places/${bookingId}.json`
       )
       .pipe(
-        map((resData) => {
-          const booking = [];
-          for (const key in resData) {
-            if (resData.hasOwnProperty(key)) {
-              booking.push(
-                new Booking(
-                  key,
-                  resData[key].placeId,
-                  resData[key].userId,
-                  resData[key].placeTitle,
-                  resData[key].placeImage,
-                  resData[key].firstname,
-                  resData[key].lastname,
-                  resData[key].guestNumber,
-                  new Date(resData[key].bookedFrom),
-                  new Date(resData[key].bookedTo)
-                )
-              );
-            }
-          }
-          return booking;
+        switchMap(() => {
+          return this._bookingsVector;
         }),
-        tap((bookings3) => {
-          this._bookingsVector.next(bookings3);
+        take(1),
+        tap((bookings) => {
+          this._bookingsVector.next(bookings.filter((b) => b.id !== bookingId));
         })
       );
   }
@@ -118,19 +100,48 @@ export class BookingService {
     );*/
   }
 
-  cancelBooking(bookingId: string) {
-    return this.http
-      .delete(
-        `https://ionic-angular-course-d0193-default-rtdb.firebaseio.com/booked-places/${bookingId}.json`
-      )
-      .pipe(
-        switchMap(() => {
-          return this._bookingsVector;
+  fetchBookings() {
+
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userId => {
+        if(!userId){
+          throw new Error('User not found');
+        }
+        return this.http.get<{ [key: string]: BookData }>(
+        `https://ionic-angular-course-d0193-default-rtdb.firebaseio.com/booked-places.json?orderBy="userId"&equalTo="${userId}"`
+        );
+    }),
+    map((resData) => {
+          const booking = [];
+          for (const key in resData) {
+            if (resData.hasOwnProperty(key)) {
+              booking.push(
+                new Booking(
+                  key,
+                  resData[key].placeId,
+                  resData[key].userId,
+                  resData[key].placeTitle,
+                  resData[key].placeImage,
+                  resData[key].firstname,
+                  resData[key].lastname,
+                  resData[key].guestNumber,
+                  new Date(resData[key].bookedFrom),
+                  new Date(resData[key].bookedTo)
+                )
+              );
+            }
+          }
+          return booking;
         }),
-        take(1),
-        tap((bookings) => {
-          this._bookingsVector.next(bookings.filter((b) => b.id !== bookingId));
+        tap((bookings3) => {
+          this._bookingsVector.next(bookings3);
         })
       );
-  }
+    }
+
+
+
+
+
 }
